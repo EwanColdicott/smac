@@ -1,6 +1,7 @@
 CC=gcc
 COPT=-g -Wall -O3
 CFLAGS=-g -Wall -O3
+LDFLAGS=-lm
 DEFS=
 
 OBJS=	main.o \
@@ -29,26 +30,26 @@ OBJS=	main.o \
 
 HDRS=	charset.h arithmetic.h packed_stats.h unicode.h visualise.h recipe.h Makefile
 
-all: smac arithmetic gsinterpolative gen_stats
+all: smac arithmetic gsinterpolative gen_stats xml2recipe
 
 clean:
-	rm -rf gen_stats smac
+	rm -rf gen_stats smac *.o gsinterpolative xml2recipe
 
 arithmetic:	arithmetic.c arithmetic.h
 # Build for running tests
-	gcc $(CFLAGS) -DSTANDALONE -o arithmetic arithmetic.c
+	gcc $(CFLAGS) -DSTANDALONE -o arithmetic arithmetic.c $(LDFLAGS)
 
 extract_tweets:	extract_tweets.o
 	gcc $(CFLAGS) -o extract_tweets extract_tweets.o
 
 gen_stats:	gen_stats.o arithmetic.o packed_stats.o gsinterpolative.o charset.o unicode.o
-	gcc $(CFLAGS) -o gen_stats gen_stats.o arithmetic.o packed_stats.o gsinterpolative.o charset.o unicode.o
+	gcc $(CFLAGS) -o gen_stats gen_stats.o arithmetic.o packed_stats.o gsinterpolative.o charset.o unicode.o $(LDFLAGS)
 
 smac:	$(OBJS)
-	gcc -g -Wall -o smac $(OBJS)
+	gcc -g -Wall -o smac $(OBJS) $(LDFLAGS)
 
 gsinterpolative:	gsinterpolative.c $(OBJS)
-	gcc -g -Wall -DSTANDALONE -o gsinterpolative{,.c} arithmetic.o
+	gcc -g -Wall -DSTANDALONE -o gsinterpolative gsinterpolative.c arithmetic.o $(LDFLAGS)
 
 %.o:	%.c $(HDRS)
 	$(CC) $(CFLAGS) $(DEFS) -c $< -o $@
@@ -66,5 +67,5 @@ extract_instance_with_library:	extract_instance_with_library.c Makefile
 	$(CC) $(CFLAGS) -o extract_instance_with_library extract_instance_with_library.c -lexpat
 
 xml2recipe:	xml2recipe.c Makefile
-	$(CC) $(CFLAGS) -o xml2recipe xml2recipe.c -lexpat
+	$(CC) $(CFLAGS) -o xml2recipe xml2recipe.c -lexpat $(LDFLAGS)
 
