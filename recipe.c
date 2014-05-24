@@ -448,6 +448,7 @@ int recipe_encode_field(struct recipe *recipe,stats_handle *stats, range_coder *
     normalised_value=atoi(value)-recipe->fields[fieldnumber].minimum;
     minimum=recipe->fields[fieldnumber].minimum;
     maximum=recipe->fields[fieldnumber].maximum;
+    if (maximum<=minimum) return -1;
     return range_encode_equiprobable(c,maximum-minimum+1,normalised_value);
   case FIELDTYPE_FLOAT:
   case FIELDTYPE_FIXEDPOINT:
@@ -995,7 +996,7 @@ int recipe_main(int argc,char *argv[], stats_handle *h)
     else return 0;
   } else if (!strcasecmp(argv[2],"decompress")) {
     if (argc<=5) {
-      fprintf(stderr,"usage: smac recipe decompress <succinct data message> <recipe directory> <output directory>\n");
+      fprintf(stderr,"usage: smac recipe decompress <recipe directory> <succinct data message> <output directory>\n");
       exit(-1);
     }
     if (recipe_decompress_file(h,argv[3],argv[4],argv[5])==-1) {
