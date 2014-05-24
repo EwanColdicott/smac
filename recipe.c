@@ -960,6 +960,8 @@ int recipe_decompress_file(stats_handle *h,char *recipe_dir,char *input_file,cha
     return -1;
   }
 
+  fprintf(stdout, "Success. Recipe name: %s\n", recipe_name);
+  fprintf(stdout, "         XML instance name: %s.xml\n", stripped_name);
 
   return r;
 }
